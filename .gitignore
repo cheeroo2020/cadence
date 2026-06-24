@@ -1,0 +1,16 @@
+# Secrets — NEVER commit these
+.env
+*.key
+*.secret
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# OS / editor noise
+.DS_Store
+.vscode/
+.idea/
