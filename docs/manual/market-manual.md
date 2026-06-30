@@ -36,6 +36,41 @@ The course has three modules and eight lessons:
 > 🔑 **Takeaway:** Keep it on paper money until your understanding is well ahead of your confidence. This manual is education, not financial advice.
 
 
+## Your operating plan — overseeing the bot day by day
+
+You don't need to do much each day — the bot runs itself on weekdays in the cloud (GitHub Actions). Your job is to watch, learn, and run one small experiment a week. Here is a two-week plan to get you fluent, followed by a rhythm you can keep forever.
+
+Weeks 1–2 — a day-by-day start:
+
+| Day | Read this | Do with the bot (5–10 min) |
+|---|---|---|
+| 1 | How to use + Lesson 1 | Open the repo's Actions tab and bot_log.csv. Read today's line aloud. Confirm a green run. |
+| 2 | Lesson 2 | Read the new log line. Did the action make sense to you? |
+| 3 | Lesson 3 + crossover reference | Daily check. Note whether the market was open today. |
+| 4 | Lesson 4 | Daily check. Notice how steady (or jumpy) the log looks so far. |
+| 5 | Review Module A | Experiment 1: ask Claude to change the slow window 20 → 50 and re-run the backtest. Predict first, then journal. |
+| 6 | Lesson 5 | Daily check. |
+| 7 | Lesson 6 | Daily check. |
+| 8 | Lesson 7 | Daily check. Read the checklist twice. |
+| 9 | Lesson 8 (capstone) | Daily check. Re-open the Lupine mapping and connect it. |
+| 10 | Review the glossary | Experiment 2: ask Claude to test a different stock. Predict, run, journal. |
+
+After two weeks — the rhythm to keep:
+
+- Every weekday (2 min): open the Actions tab and read the newest bot_log.csv line. Ask: did it do what I expected?
+- Once a week (20 min): run one experiment — change a single setting, predict the result, ask Claude to run it, and journal what happened.
+- Once a month (15 min): re-read one lesson and skim your journal. Ask: is my understanding now ahead of my confidence?
+- Never (for now): add real money, options, or futures until you can honestly tick every box in Lesson 7.
+
+Three signals worth acting on while you oversee:
+
+- A red ✗ on a run in the Actions tab → the bot errored. Tell Claude and it gets fixed.
+- A 'buy' or 'sell' line in bot_log.csv → it actually traded. Open Alpaca, look at the paper order, note it in your journal.
+- Several trades piling up in a few days → that's whipsaw happening live. Re-read Lesson 1.
+
+> 🔑 **Takeaway:** Overseeing is mostly watching, not doing: two minutes a day, one experiment a week, and never risk real money until the checklist says yes.
+
+
 ---
 
 # Module A — How markets really behave
