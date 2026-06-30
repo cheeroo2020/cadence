@@ -20,6 +20,7 @@ SETUP:
 """
 
 import os
+import csv
 
 from dotenv import load_dotenv
 from alpaca.trading.client import TradingClient
@@ -28,7 +29,7 @@ from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Load keys from the .env file (if present). Also works with exported env vars.
 load_dotenv()
@@ -39,6 +40,10 @@ DOLLARS_PER_BUY = 10   # how much to spend per buy (fractional shares)
 SHORT_WINDOW = 5       # short moving average, in days
 LONG_WINDOW = 20       # long moving average, in days
 # -----------------------------------------------------------------------------
+
+# Every run appends one row here, so you have a readable history of what the bot
+# did and when. Lives next to this file, committed to the repo by the scheduler.
+LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bot_log.csv")
 
 API_KEY = os.environ["ALPACA_KEY"]
 API_SECRET = os.environ["ALPACA_SECRET"]
@@ -89,17 +94,36 @@ def sell_all(symbol):
     print(f"SELL all {symbol}")
 
 
+def log_run(short_ma, long_ma, holding, action):
+    """Append one row to bot_log.csv so every run leaves a readable trace."""
+    new_file = not os.path.exists(LOG_FILE)
+    with open(LOG_FILE, "a", newline="") as f:
+        writer = csv.writer(f)
+        if new_file:
+            writer.writerow(["timestamp_utc", "symbol", "short_ma", "long_ma",
+                             "holding", "action"])
+        fmt = lambda v: f"{v:.2f}" if isinstance(v, float) else ""
+        writer.writerow([
+            datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),
+            SYMBOL, fmt(short_ma), fmt(long_ma),
+            "" if holding is None else holding, action,
+        ])
+    print(f"Logged: {action}")
+
+
 def run():
     # 1. Only act when the market is open.
     clock = trading.get_clock()
     if not clock.is_open:
         print("Market is closed. Doing nothing.")
+        log_run(None, None, None, "market_closed")
         return
 
     # 2. Get the data and compute the two moving averages.
     closes = get_recent_closes(SYMBOL, LONG_WINDOW)
     if len(closes) < LONG_WINDOW:
         print("Not enough price history yet. Doing nothing.")
+        log_run(None, None, None, "insufficient_data")
         return
 
     short_ma = moving_average(closes, SHORT_WINDOW)
@@ -111,10 +135,15 @@ def run():
     # 3. The decision.
     if short_ma > long_ma and not holding:
         buy(SYMBOL, DOLLARS_PER_BUY)      # uptrend and we're out -> get in
+        action = "buy"
     elif short_ma < long_ma and holding:
         sell_all(SYMBOL)                  # downtrend and we're in -> get out
+        action = "sell"
     else:
         print("No change. Doing nothing.")
+        action = "hold"
+
+    log_run(short_ma, long_ma, holding, action)
 
 
 if __name__ == "__main__":

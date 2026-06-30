@@ -1,0 +1,40 @@
+name: Daily trading bot (paper)
+
+# Runs the bot automatically on weekdays, in GitHub's cloud, on PAPER money.
+# You can watch every run under the repo's "Actions" tab.
+on:
+  schedule:
+    # 14:30 UTC, Monday-Friday (~mid-morning US market session).
+    # GitHub cron is UTC and can be delayed a few minutes — fine for a daily bot.
+    - cron: "30 14 * * 1-5"
+  workflow_dispatch: {}   # also lets you run it on demand with a button
+
+permissions:
+  contents: write          # so it can commit the updated bot_log.csv back
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run the bot
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+        run: python3 daily_bot.py
+
+      - name: Save the run to the log
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bot_log.csv
+          git diff --staged --quiet || git commit -m "Daily bot run: update log"
+          git push
