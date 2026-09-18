@@ -58,3 +58,4 @@ timestamp_utc,symbol,short_ma,long_ma,holding,action
 2026-09-15 18:20,AAPL,327.56,319.23,True,hold
 2026-09-16 18:17,AAPL,331.55,320.49,True,hold
 2026-09-17 18:24,AAPL,332.93,321.33,True,hold
+2026-09-18 17:46,AAPL,333.85,322.60,True,hold
