@@ -70,3 +70,4 @@ timestamp_utc,symbol,short_ma,long_ma,holding,action
 2026-10-01 19:39,AAPL,334.28,331.58,True,hold
 2026-10-02 19:26,AAPL,332.91,331.88,True,hold
 2026-10-05 21:33,AAPL,,,,market_closed
+2026-10-06 19:39,AAPL,332.73,333.42,True,sell
